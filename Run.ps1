@@ -1,6 +1,14 @@
 [CmdletBinding()]
+Param(
+)
+
+$RequiredModules = "xPSDesiredStateConfiguration"
+
 
 $ErrorActionPreference = 'Stop'
+$PSPathSeparator       = [System.IO.Path]::PathSeparator
+$LocalModulesDir       = Join-Path $PSScriptRoot "Modules"
+$LocalModulesCacheDir  = Join-Path $PSScriptRoot "ModulesCache"
 
 if (-not (Get-PackageProvider -name NuGet)) {
     Write-Verbose "Installing Nuget package provider..."
@@ -14,6 +22,20 @@ if (-not (Get-PSRepository PSGallery ).Trusted) {
 if ("Stopped" -eq (Get-Service -Name winrm).Status) {
     Write-Verbose "Setting up winrm quick config..."
     winrm quickconfig -force
+}
+
+if (-not ($env:PSModulePath -split $PSPathSeparator).Contains($LocalModulesDir)) {
+    $env:PSModulePath = "$LocalModulesDir$PSPathSeparator$env:PSModulePath"
+}
+
+if (-not ($env:PSModulePath -split $PSPathSeparator).Contains($LocalModulesCacheDir)) {
+    $env:PSModulePath = "$LocalModulesCacheDir$PSPathSeparator$env:PSModulePath"
+}
+
+$RequiredModules | ForEach-Object {
+    if (-not (Get-Module -ListAvailable $_)) {
+        Save-Module $_ -Path $LocalModulesCacheDir
+    }
 }
 
 . $PSScriptRoot\DevConfig.ps1

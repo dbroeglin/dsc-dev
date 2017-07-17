@@ -1,6 +1,8 @@
 Configuration DevConfig {
 
     Import-DSCResource -ModuleName PSDesiredStateConfiguration
+    Import-DSCResource -ModuleName xPSDesiredStateConfiguration
+    Import-DSCResource -ModuleName Composites
 
     Node $env:COMPUTERNAME {
         LocalConfigurationManager {
@@ -17,6 +19,11 @@ Configuration DevConfig {
         WindowsOptionalFeature "Containers" {
             Ensure   = "Enable"
             Name     = "Containers"
-        }        
+        }
+
+        Java Jdk {
+            DownloadDir = "c:\Downloads"
+
+        } 
     }
 }
