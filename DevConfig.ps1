@@ -1,14 +1,17 @@
 Configuration DevConfig {
 
     Import-DSCResource -ModuleName PSDesiredStateConfiguration
-    Import-DSCResource -ModuleName xPSDesiredStateConfiguration
-    Import-DSCResource -ModuleName Composites
+    Import-DSCResource -ModuleName xPSDesiredStateConfiguration -ModuleVersion 7.0.0.0
+    Import-DSCResource -ModuleName Composites -ModuleVersion 1.0
+
+    $DownloadDir = "c:\Downloads"
 
     Node $env:COMPUTERNAME {
         LocalConfigurationManager {
-            RebootNodeIfNeeded   = $true;
-            AllowModuleOverwrite = $true;
-            ConfigurationMode    = 'ApplyOnly';
+            RebootNodeIfNeeded   = $true
+            AllowModuleOverwrite = $true
+            ConfigurationMode    = 'ApplyOnly'
+            DebugMode            = "ForceModuleImport"            
         }
 
         WindowsOptionalFeature "Microsoft-Hyper-V-All" {
@@ -21,9 +24,17 @@ Configuration DevConfig {
             Name     = "Containers"
         }
 
-        Java Jdk {
-            DownloadDir = "c:\Downloads"
+        File DownloadDir {
+            DestinationPath = $DownloadDir
+            Type            = "Directory"
+            Ensure          = "Present"
+        }
 
+        Java Jdk {
+            DownloadDir = $DownloadDir
+            DependsOn   = "[File]DownloadDir"
         } 
+
+        VSCode VSCode {}
     }
 }
