@@ -3,31 +3,55 @@ Configuration Java {
     Param(
         [Parameter(Mandatory)]
         $DownloadDir,
-        $JdkVersion = '1.8.0_131',
-        $Build      = '11',
-        $Id         = "d54c1d3a095b4ff2b6607d096fa80163"
+        
+        [String]
+        $JavaVersion = '1.8.0_144',
+
+        [String]
+        $JdkVersion = '8u144',
+
+        [String]
+        $Build      = '01',
+
+        [String]
+        $OracleId   = '090f390dda5b47b9b721c7dfaa008135',   
+        
+        # Obtain with: Get-WmiObject Win32_Product | Format-Table IdentifyingNumber, Name, Version | ? Name -like *Java*
+        [String] 
+        $ProductId  = "{64A3A4F4-B792-11D6-A78A-00B0D0180144}",
+
+        [String]
+        $PackageName = "Java SE Development Kit 8 Update 144"
     )
 
     Import-DSCResource -ModuleName xPSDesiredStateConfiguration
 
-    $Filename = "jdk-$JdkVersion-windows-x64.exe"
-
+    $filename = "jdk-$JdkVersion-windows-x64.exe"
+    $downloadFilename = Join-Path $DownloadDir $filename
+    
     Script "DownloadJdk" {
         GetScript = { }
         TestScript = {
-            Test-Path c:\toto # TODO
+            Test-Path -PathType Leaf -Path $Using:downloadFilename
         }
         SetScript = {
-            $Url = "http://download.oracle.com/otn-pub/java/jdk/$using:JdkVersion-b$using:Build/$id/$filename"
-            $DownloadFilename = Join-Path $using:DownloadDir $using:Filename
+            $url = "http://download.oracle.com/otn-pub/java/jdk/$Using:JdkVersion-b$Using:Build/$Using:OracleId/$Using:filename"
 
-            Write-Verbose "Downloaing from: $Url"
-            Write-Verbose "Downloading  to: $DownloadFilename"
+            Write-Verbose "Downloading from: $url"
+            Write-Verbose "Downloading   to: $Using:downloadFilename"
 
             $Client = New-Object Net.WebClient
-            $Null = $Client.Headers.Add('Cookie', 'gpw_e24=http://www.oracle.com; oraclelicense=accept-securebackup-cookie')
-            $Null = $Client.DownloadFile($Url, $DownloadFilename)
-
+            $Null = $Client.Headers.Add('Cookie', 'gpw_e24=http://www.oracle.com;oraclelicense=accept-securebackup-cookie')
+            $Null = $Client.DownloadFile($url, $Using:downloadFilename)
         }
-    } 
+    }
+
+    xPackage Jdk {
+        Name      = $PackageName
+        Path      = $downloadFilename
+        ProductId = $ProductId
+        Ensure    = "Present"
+        Arguments = '/s STATIC=1 ADDLOCAL="ToolsFeature"'
+        DependsOn = "[Script]DownloadJdk"
+    }
 }
