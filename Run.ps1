@@ -7,7 +7,10 @@ Param(
     $WithCopy
 )
 
-$RequiredModules = "xPSDesiredStateConfiguration"
+$RequiredModules = @(
+    @{ Name = "xPSDesiredStateConfiguration"; RequiredVersion = "7.0.0.0" }
+    #@{ Name = "xDismFeature"; RequiredVersion = "1.2.0.0" }
+)
 
 
 $ErrorActionPreference = 'Stop'
@@ -75,9 +78,9 @@ if (-not (Test-Path -Path $LocalModulesCacheDir)) {
     New-Item -ItemType Container -Path $LocalModulesCacheDir > $Null
 }
 $RequiredModules | ForEach-Object {
-    if (-not (Get-Module -ListAvailable $_)) {
-        Write-Verbose "Installing module $_ to $LocalModulesCacheDir..."
-        Save-Module $_ -Path $LocalModulesCacheDir
+    if (-not (Get-Module -ListAvailable $_.Name)) {
+        Write-Verbose "Installing module $($_ | ConvertTo-Json) to $LocalModulesCacheDir..."
+        Save-Module @_ -Path $LocalModulesCacheDir
     }
 }
 
