@@ -5,23 +5,23 @@ Configuration Java {
         $DownloadDir,
         
         [String]
-        $JavaVersion = '1.8.0_144',
+        $JavaVersion = '1.8.0_162',
 
         [String]
-        $JdkVersion = '8u144',
+        $JdkVersion = '8u162',
 
         [String]
-        $Build      = '01',
+        $Build      = '12',
 
         [String]
-        $OracleId   = '090f390dda5b47b9b721c7dfaa008135',   
+        $OracleId   = '0da788060d494f5095bf8624735fa2f1',   
         
         # Obtain with: Get-WmiObject Win32_Product | Format-Table IdentifyingNumber, Name, Version | ? Name -like *Java*
-        [String] 
-        $ProductId  = "{64A3A4F4-B792-11D6-A78A-00B0D0180144}",
+        [String]       
+        $ProductId  = "{64A3A4F4-B792-11D6-A78A-00B0D0180162}",
 
         [String]
-        $PackageName = "Java SE Development Kit 8 Update 144"
+        $PackageName = "Java SE Development Kit 8 Update 162"
     )
 
     Import-DSCResource -ModuleName xPSDesiredStateConfiguration

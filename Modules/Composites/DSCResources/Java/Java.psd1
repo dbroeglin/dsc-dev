@@ -27,7 +27,7 @@ Author = 'dom'
 CompanyName = 'Unknown'
 
 # Copyright statement for this module
-Copyright = '(c) 2017 dom. All rights reserved.'
+Copyright = '(c) 2017 Dominique Broeglin. All rights reserved.'
 
 # Description of the functionality provided by this module
 # Description = ''
