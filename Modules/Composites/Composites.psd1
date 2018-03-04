@@ -8,7 +8,7 @@
     CmdletsToExport      = @()
     VariablesToExport    = '*'
     AliasesToExport      = @()
-    DscResourcesToExport = @("Java", "VSCode")
+    DscResourcesToExport = @("Java", "Maven", "VSCode")
     PrivateData          = @{
         PSData = @{
         } # End of PSData hashtable
