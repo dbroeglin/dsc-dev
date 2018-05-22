@@ -92,7 +92,7 @@ try {
     DevConfig -ConfigurationData @{ 
         AllNodes = @(
             @{
-                NodeName = $env:COMPUTERNAME
+                NodeName = "$env:COMPUTERNAME"
             }
         )} -OutputPath DevConfig -Verbose
 
